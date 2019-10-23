@@ -1,0 +1,10 @@
+---
+author: Luke Beasley and Chris Russo
+title: "Visualization with GeomMLBStadiums Tutorial"
+output: html_document
+editor_options: 
+  chunk_output_type: console
+---
+
+
+
