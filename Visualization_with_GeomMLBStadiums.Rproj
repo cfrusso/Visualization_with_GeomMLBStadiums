@@ -11,3 +11,6 @@ Encoding: UTF-8
 
 RnwWeave: Sweave
 LaTeX: pdfLaTeX
+
+BuildType: Website
+WebsitePath: ~/2019-2020/Fall 2019/EDAV/Visualization_with_GeomMLBStadiums
