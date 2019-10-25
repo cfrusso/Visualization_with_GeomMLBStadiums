@@ -6,5 +6,107 @@ editor_options:
   chunk_output_type: console
 ---
 
+# Introduction
+
+The GeomMLBStadiums package was created by Ben Dilday and is available via https://github.com/bdilday/GeomMLBStadiums. We present ways to work with this package and Statcast data gathered from https://baseballsavant.mlb.com/statcast_search.
+
+# Install and Load
+
+```{r eval=FALSE}
+if(!require(devtools)){
+  install.packages("devtools")
+}
+devtools::install_github("bdilday/GeomMLBStadiums")
+```
+
+```{r message=FALSE, warning=FALSE}
+library(GeomMLBStadiums)
+library(ggplot2)
+library(dplyr)
+```
+
+# Load Statcast Data from 2019 Regular Season
+
+```{r}
+load("pbp2019.rda")
+```
+
+# Prepare Data
+
+```{r}
+# convert all null to NA
+pbp2019[pbp2019 == "null"] <- NA
+
+# order
+pbp2019 <- pbp2019 %>%
+  mutate(game_date = as.Date(game_date, "%m/%d/%Y")) %>%
+  arrange(game_date, home_team, at_bat_number, pitch_number)
+
+# add indicator for stadium
+team_ids <- data.frame(team = unique(MLBStadiumsPathData$team)[-31],
+                       abbr = c("LAA","HOU","OAK","TOR","ATL",
+                                "MIL","STL","CHC","ARI","LAD",
+                                "SF","CLE","SEA","MIA","NYM",
+                                "WSH","BAL","SD","PHI","PIT",
+                                "TEX","TB","BOS","CIN","COL",
+                                "KC","DET","MIN","CWS","NYY"),
+                       stringsAsFactors = F)
+pbp2019 <- pbp2019 %>%
+  left_join(team_ids, by = c("home_team" = "abbr"))
+
+# convert variable types
+pbp2019 <- pbp2019 %>%
+  mutate(hc_x = as.numeric(hc_x),
+         hc_y = as.numeric(hc_y),
+         launch_speed = as.numeric(launch_speed))
+
+```
+
+# Plot Spray Chart of a Batter
+
+## Select Pete Alonso Batted Balls
+
+```{r}
+# separate home and away
+
+alonso_home <- pbp2019 %>%
+  filter(batter == 624413,
+         home_team == "NYM",
+         launch_speed > 0)
+
+alonso_away <- pbp2019 %>%
+  filter(batter == 624413,
+         home_team != "NYM",
+         launch_speed > 0)
+```
+
+## Plot on Single Stadium
+
+```{r message=FALSE, warning=FALSE}
+alonso_home %>% mlbam_xy_transformation() %>%  
+  ggplot(aes(x=hc_x_, y=hc_y_)) + 
+  geom_spraychart(stadium_ids = "mets",
+                  stadium_transform_coords = TRUE, 
+                  stadium_segments = "all") + 
+  theme_void() + 
+  coord_fixed()
+```
+
+
+## Plot on Multiple Stadiums
+
+```{r message=FALSE, warning=FALSE}
+alonso_away %>% mlbam_xy_transformation() %>%  
+  ggplot(aes(x=hc_x_, y=hc_y_)) + 
+  geom_spraychart(stadium_ids = unique(alonso_away$team),
+                  stadium_transform_coords = TRUE, 
+                  stadium_segments = "all") + 
+  theme_void() + 
+  coord_fixed() +
+  facet_wrap(~team)
+```
+
+
+
 
 
