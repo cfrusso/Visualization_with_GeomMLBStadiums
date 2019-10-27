@@ -33,6 +33,7 @@ pbp2019 <- pbp2019 %>%
          launch_speed = as.numeric(launch_speed))
 
 
+
 # select Pete Alonso batted balls home/away
 alonso_home <- pbp2019 %>%
   filter(batter == 624413,
@@ -64,6 +65,22 @@ alonso_home %>% mlbam_xy_transformation() %>%
   theme_void() + 
   coord_fixed()
 
+alonso_home %>% mlbam_xy_transformation() %>%  
+  ggplot(aes(x=hc_x_, y=hc_y_, color = events)) + 
+  geom_spraychart(stadium_ids = "mets",
+                  stadium_transform_coords = TRUE, 
+                  stadium_segments = "all") + 
+  theme_void() + 
+  coord_fixed()
+
+alonso_home %>% mlbam_xy_transformation() %>%  
+  ggplot(aes(x=hc_x_, y=hc_y_, color = events)) + 
+  geom_spraychart(stadium_ids = "mets",
+                  stadium_transform_coords = TRUE, 
+                  stadium_segments = "all") + 
+  theme_void() + 
+  coord_fixed()
+
 
 alonso_away %>% mlbam_xy_transformation() %>%  
   ggplot(aes(x=hc_x_, y=hc_y_, color = events)) + 
@@ -74,6 +91,32 @@ alonso_away %>% mlbam_xy_transformation() %>%
   coord_fixed() +
   facet_wrap(~team)
 
+### new lines
+marlins_home <- pbp2019 %>%
+  filter(team == 'marlins',
+         home_team == "MIA",
+         launch_speed > 0)
 
+print(pbp2019)
 
+marlins_home %>% mlbam_xy_transformation() %>%  
+  ggplot(aes(x=hc_x_, y=hc_y_, color = events)) + 
+  geom_spraychart(stadium_ids = "MIA",
+                  stadium_transform_coords = TRUE, 
+                  stadium_segments = "all") + 
+  theme_void() + 
+  coord_fixed() +
+  facet_wrap(~batter)
 
+alonso_marlins <- pbp2019 %>%
+  filter(batter == 624413,
+         home_team == "MIA",
+         launch_speed > 0)
+
+alonso_marlins %>% mlbam_xy_transformation() %>%  
+  ggplot(aes(x=hc_x_, y=hc_y_, color = bb_type )) + 
+  geom_spraychart(stadium_ids = "marlins",
+                  stadium_transform_coords = TRUE, 
+                  stadium_segments = "all") + 
+  theme_void() + 
+  coord_fixed()
