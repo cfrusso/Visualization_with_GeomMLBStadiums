@@ -5,24 +5,10 @@ output: github_document
 editor_options: 
   chunk_output_type: console
 ---
-```{r}
-#devtools::install_github("bdilday/GeomMLBStadiums")
-library(GeomMLBStadiums)
-library(ggplot2)
-library(dplyr)
-```
-```{r}
-load("pbp2019.rda")
-
-<<<<<<< HEAD
-# convert all null to NA
-pbp2019[pbp2019 == "null"] <- NA
-=======
-# Introduction
 
 The GeomMLBStadiums package was created by Ben Dilday and is available via https://github.com/bdilday/GeomMLBStadiums. We present ways to work with this package and Statcast data gathered from https://baseballsavant.mlb.com/statcast_search.
 
-# Install and Load
+First, install the package and load it, along with dplyr for data manipulation and ggplot2 for plotting.
 
 ```{r eval=FALSE}
 if(!require(devtools)){
@@ -37,13 +23,13 @@ library(ggplot2)
 library(dplyr)
 ```
 
-# Load Statcast Data from 2019 Regular Season
+Next, load the data. We will use 2019 regular season data, but any subset of Statcast data will work.
 
 ```{r}
 load("pbp2019.rda")
 ```
 
-# Prepare Data
+Some data management is needed to prepare for plotting:
 
 ```{r}
 # convert all null to NA
@@ -74,11 +60,10 @@ pbp2019 <- pbp2019 %>%
 
 ```
 
-# Plot Spray Chart of a Batter
-
-## Select Pete Alonso Batted Balls
+Now, we are ready to graph the spray charts. Analyses could be done with as many player data points as wanted, but the graph would be cluttered, so we will start with one player's home data. We split into home and away because we are going to look at stadiums separately. Each batter's playerID can be found on his MLB.com page. We will start with Pete Alonso (ID = 624413).
 
 ```{r}
+# select Pete Alonso batted balls
 # separate home and away
 
 alonso_home <- pbp2019 %>%
@@ -92,7 +77,7 @@ alonso_away <- pbp2019 %>%
          launch_speed > 0)
 ```
 
-## Plot on Single Stadium
+To see Alonso's home spray chart, we use his home stadium by specifying "mets" as the only stadium id.
 
 ```{r message=FALSE, warning=FALSE}
 alonso_home %>% mlbam_xy_transformation() %>%  
@@ -104,8 +89,7 @@ alonso_home %>% mlbam_xy_transformation() %>%
   coord_fixed()
 ```
 
-
-## Plot on Multiple Stadiums
+For road data, we include all ballparks he has played in other than Citi Field, and facet on the team variable.
 
 ```{r message=FALSE, warning=FALSE}
 alonso_away %>% mlbam_xy_transformation() %>%  
@@ -118,43 +102,10 @@ alonso_away %>% mlbam_xy_transformation() %>%
   facet_wrap(~team)
 ```
 
-
-
->>>>>>> 8cee1b719adc37c04295cfc9da8365e8b5243443
-
-# order
-pbp2019 <- pbp2019 %>%
-  mutate(game_date = as.Date(game_date, "%m/%d/%Y")) %>%
-  arrange(game_date, home_team, at_bat_number, pitch_number)
-
-# add indicator for stadium
-team_ids <- data.frame(team = unique(MLBStadiumsPathData$team)[-31],
-                       abbr = c("LAA","HOU","OAK","TOR","ATL",
-                                "MIL","STL","CHC","ARI","LAD",
-                                "SF","CLE","SEA","MIA","NYM",
-                                "WSH","BAL","SD","PHI","PIT",
-                                "TEX","TB","BOS","CIN","COL",
-                                "KC","DET","MIN","CWS","NYY"),
-                       stringsAsFactors = F)
-
-pbp2019 <- pbp2019 %>%
-  left_join(team_ids, by = c("home_team" = "abbr"))
-
-# convert variable types
-pbp2019 <- pbp2019 %>%
-  mutate(hc_x = as.numeric(hc_x),
-         hc_y = as.numeric(hc_y),
-         launch_speed = as.numeric(launch_speed))
-```
-
-
-
-
-# starting Luke's part of the tutorial, so Chris you can add your part above this line - i just threw in what you sent me so I could run my part. You can write the tutorial part and add anything else needed
-
 Once the foundation of plotting the hit locations on the stadium has been laid, we can move on to a variety of interesting uses. A few examples we will walk through include labelling by batted ball type (bb_type), comparing how different pitch types are scattered, analyzing how a certain player performs across different stadiums, and determining the effect of a home team's stadium. Finally, we will pose some questions that you can work on for yourself.
 
-All analysis could be done with as many player data points as wanted, but the graph would be cluttered, so we will stick to one player's home data (we split into home because we are going to look at his home stadium. We can look at multiple stadiums but it will add complexity to the graph). We will use 2018 NL MVP Christian Yelich. First, we find his playerID from his MLB.com page (ID= 592885).
+Next, consider 2018 NL MVP Christian Yelich (ID = 592885).
+
 ```{r}
 # select Christian Yelich batted balls home
 yelich_home <- pbp2019 %>%
@@ -162,8 +113,10 @@ yelich_home <- pbp2019 %>%
          home_team == "MIL",
          launch_speed > 0)
 ```
+
 We will use yelich_home just as before, but change the labelling to bb_type. From this chart, we can see any trends that emerge. For example, it appears Yelich hits line drives to all parts of the field, but tends to hit more ground balls to the right side of the field and more fly balls to the left side of the field. 
-```{r}
+
+```{r message=FALSE, warning=FALSE}
 yelich_home %>% mlbam_xy_transformation() %>%  
   ggplot(aes(x=hc_x_, y=hc_y_, color = bb_type )) + 
   geom_spraychart(stadium_ids = "brewers",
@@ -172,8 +125,10 @@ yelich_home %>% mlbam_xy_transformation() %>%
   theme_void() + 
   coord_fixed()
 ```
+
 We can run a similar analysis on pitch types as below.
-```{r}
+
+```{r message=FALSE, warning=FALSE}
 yelich_home %>% mlbam_xy_transformation() %>%  
   ggplot(aes(x=hc_x_, y=hc_y_, color = pitch_type )) + 
   geom_spraychart(stadium_ids = "brewers",
@@ -182,8 +137,10 @@ yelich_home %>% mlbam_xy_transformation() %>%
   theme_void() + 
   coord_fixed()
 ```
+
 However, we can also run this analysis across pitch types to see if Yelich tends to do better against certain pitches. 
-```{r}
+
+```{r message=FALSE, warning=FALSE}
 yelich_home %>% mlbam_xy_transformation() %>%  
   ggplot(aes(x=hc_x_, y=hc_y_, color = bb_type )) + 
   geom_spraychart(stadium_ids = "brewers",
@@ -194,7 +151,8 @@ yelich_home %>% mlbam_xy_transformation() %>%
   facet_wrap(~pitch_type)
 ```
 
-Next, let's see how Mike Trout (545361) hits across different stadiums. Again, we could look across all 29 other stadiums, but for ease of viewing we will examine the other teams in the AL West (Astros, Athletics, Rangers, Mariners).
+Next, let's see how Mike Trout (ID = 545361) hits across different stadiums. We could look across all 29 other stadiums, but for ease of viewing we will examine the other teams in the AL West (Astros, Athletics, Rangers, Mariners).
+
 ```{r}
 # select Mike Trout batted balls against division rivals
 trout_away_division <- pbp2019 %>%
@@ -202,9 +160,10 @@ trout_away_division <- pbp2019 %>%
          home_team == c("HOU","OAK","TEX","SEA"),
          launch_speed > 0)
 ```
+
 Now we will plot Trout's batting against each of these rivals at their respective stadiums. We can go back to look at batted ball event if we'd like, but for now we will keep looking at batted ball type. 
 
-```{r}
+```{r message=FALSE, warning=FALSE}
 trout_away_division %>% mlbam_xy_transformation() %>%  
   ggplot(aes(x=hc_x_, y=hc_y_, color = bb_type )) + 
   geom_spraychart(stadium_ids = c("astros", "athletics", "rangers", "mariners"),
@@ -214,15 +173,18 @@ trout_away_division %>% mlbam_xy_transformation() %>%
   coord_fixed()+
   facet_wrap(~team)
 ```
+
 A big storyline in baseball this year was the homerun race between the New York Yankees and the Minnesota Twins. However, most fans would acknowledge that Yankees stadium is notorious for having short fences. Therefore, we wanted to compare the Yankees home spray chart against the Minnesota Twins ballpark to see how many home runs they would have lost. Additionally, we can compare the Twins home data to Yankee stadium to see how many home runs they would have gained. 
+
 ```{r}
-# select Christian Yelich batted balls home
 yankees_home <- pbp2019 %>%
   filter(home_team == "NYY",
          launch_speed > 0)
 ```
+
 Showing Yankees data at their own stadium (reality):
-```{r}
+
+```{r message=FALSE, warning=FALSE}
 yankees_home %>% mlbam_xy_transformation() %>%  
   ggplot(aes(x=hc_x_, y=hc_y_, color = events )) + 
   geom_spraychart(stadium_ids = "yankees",
@@ -231,7 +193,7 @@ yankees_home %>% mlbam_xy_transformation() %>%
   theme_void() + 
   coord_fixed()
 ```
-```{r}
+```{r message=FALSE, warning=FALSE}
 yankees_home %>% mlbam_xy_transformation() %>%  
   ggplot(aes(x=hc_x_, y=hc_y_, color = events )) + 
   geom_spraychart(stadium_ids = "twins",
