@@ -194,7 +194,8 @@ yankees_home %>% mlbam_xy_transformation() %>%
   coord_fixed()
 ```
 
-Now showing yankees_home data as if they played at the Twins ballpark. 
+Now showing yankees_home data as if they played at the Twins ballpark.
+
 ```{r message=FALSE, warning=FALSE}
 yankees_home %>% mlbam_xy_transformation() %>%  
   ggplot(aes(x=hc_x_, y=hc_y_, color = events )) + 
@@ -222,7 +223,8 @@ twins_home %>% mlbam_xy_transformation() %>%
   coord_fixed()
 ```
 
-One interesting observation is that many balls that appear to be far enough to be home runs are not, therefore it seems the Twins stadium has some high wall that makes true distance needed to hit a home run longer than it appears in these graphs. This observation also affects our previous analysis of Yankees homeruns at the Twins home stadium. Now showing twins_home data as if they played at the Yankees ballpark. 
+One interesting observation is that many balls that appear to be far enough to be home runs are not, therefore it seems the Twins stadium has some high wall that makes true distance needed to hit a home run longer than it appears in these graphs. This observation also affects our previous analysis of Yankees homeruns at the Twins home stadium. Now showing twins_home data as if they played at the Yankees ballpark.
+
 ```{r message=FALSE, warning=FALSE}
 twins_home %>% mlbam_xy_transformation() %>%  
   ggplot(aes(x=hc_x_, y=hc_y_, color = events )) + 
@@ -233,11 +235,16 @@ twins_home %>% mlbam_xy_transformation() %>%
   coord_fixed()
 ```
 
-Overall, it would be hard to confidently conclude that the home stadiums would have changed each team's total home run mark, but this package allows for an intriguing starting point for answering this question. 
+Overall, it would be hard to confidently conclude that the home stadiums would have changed each team's total home run mark, but this package allows for an intriguing starting point for answering this question.
 
 Some potential questions we will leave up to the reader for exercises:
-1. Choose your favorite player and analyze the difference between his home and away spray charts depending on stadium. 
-2. Choose your favorite team and determine which players utilized all parts of the field most effectively.
-3. Determine if certain positions (i.e. shortstops vs first basemen) tend to spray the ball to different parts of the field.
-4. Analyze what spraycharts look like against a particular pitcher. 
-5. Be creative with your own questions and use the package to draw insightful observations. 
+
+* Choose your favorite player and analyze the difference between his home and away spray charts depending on stadium.
+
+* Choose your favorite team and determine which players utilized all parts of the field most effectively.
+
+* Determine if certain positions (i.e. shortstops vs first basemen) tend to spray the ball to different parts of the field.
+
+* Analyze what spraycharts look like against a particular pitcher.
+
+* Be creative with your own questions and use the package to draw insightful observations. 

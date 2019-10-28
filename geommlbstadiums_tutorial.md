@@ -113,7 +113,7 @@ yelich_home <- pbp2019 %>%
          launch_speed > 0)
 ```
 
-We will use yelich\_home just as before, but change the labelling to bb\_type. From this chart, we can see any trends that emerge. For example, it appears Yelich hits line drives to all parts of the field, but tends to hit more ground balls to the right side of the field and more fly balls to the left side of the field.
+We will use yelich\_home just as before, but change the labelling (color) to bb\_type. From this chart, we can see any trends that emerge. For example, it appears Yelich hits line drives to all parts of the field, but tends to hit more ground balls to the right side of the field and more fly balls to the left side of the field.
 
 ``` r
 yelich_home %>% mlbam_xy_transformation() %>%  
@@ -127,7 +127,7 @@ yelich_home %>% mlbam_xy_transformation() %>%
 
 ![](geommlbstadiums_tutorial_files/figure-markdown_github/unnamed-chunk-9-1.png)
 
-We can run a similar analysis on pitch types as below.
+We can run a similar analysis labelling on pitch types as below.
 
 ``` r
 yelich_home %>% mlbam_xy_transformation() %>%  
@@ -141,7 +141,7 @@ yelich_home %>% mlbam_xy_transformation() %>%
 
 ![](geommlbstadiums_tutorial_files/figure-markdown_github/unnamed-chunk-10-1.png)
 
-However, we can also run this analysis across pitch types to see if Yelich tends to do better against certain pitches.
+However, we can also run this analysis labelling by bb\_type but faceting on pitch types to see if Yelich tends to do better against certain pitches.
 
 ``` r
 yelich_home %>% mlbam_xy_transformation() %>%  
@@ -166,7 +166,7 @@ trout_away_division <- pbp2019 %>%
          launch_speed > 0)
 ```
 
-Now we will plot Trout's batting against each of these rivals at their respective stadiums. We can go back to look at batted ball event if we'd like, but for now we will keep looking at batted ball type.
+Now we will plot Trout's batting against each of these rivals at their respective stadiums. We can go back to look at batted ball event if we'd like, but for now we will keep labelling by batted ball type.
 
 ``` r
 trout_away_division %>% mlbam_xy_transformation() %>%  
@@ -203,6 +203,8 @@ yankees_home %>% mlbam_xy_transformation() %>%
 
 ![](geommlbstadiums_tutorial_files/figure-markdown_github/unnamed-chunk-15-1.png)
 
+Now showing yankees\_home data as if they played at the Twins ballpark.
+
 ``` r
 yankees_home %>% mlbam_xy_transformation() %>%  
   ggplot(aes(x=hc_x_, y=hc_y_, color = events )) + 
@@ -214,3 +216,51 @@ yankees_home %>% mlbam_xy_transformation() %>%
 ```
 
 ![](geommlbstadiums_tutorial_files/figure-markdown_github/unnamed-chunk-16-1.png)
+
+Interestingly, it appears that the Yankees may have, in fact, had more homeruns if they playerd at the Twins home ball park. After researching each ballparks dimensions, the Twins do have a shorter field in left-center, center, and right-center. However, the Yankees have a much shorter field down each line. Now we will look at the Twins home data and compare to Yankees field.
+
+``` r
+twins_home <- pbp2019 %>%
+  filter(home_team == "MIN",
+         launch_speed > 0)
+```
+
+``` r
+twins_home %>% mlbam_xy_transformation() %>%  
+  ggplot(aes(x=hc_x_, y=hc_y_, color = events )) + 
+  geom_spraychart(stadium_ids = "twins",
+                  stadium_transform_coords = TRUE, 
+                  stadium_segments = "all") + 
+  theme_void() + 
+  coord_fixed()
+```
+
+![](geommlbstadiums_tutorial_files/figure-markdown_github/unnamed-chunk-18-1.png)
+
+One interesting observation is that many balls that appear to be far enough to be home runs are not, therefore it seems the Twins stadium has some high wall that makes true distance needed to hit a home run longer than it appears in these graphs. This observation also affects our previous analysis of Yankees homeruns at the Twins home stadium. Now showing twins\_home data as if they played at the Yankees ballpark.
+
+``` r
+twins_home %>% mlbam_xy_transformation() %>%  
+  ggplot(aes(x=hc_x_, y=hc_y_, color = events )) + 
+  geom_spraychart(stadium_ids = "yankees",
+                  stadium_transform_coords = TRUE, 
+                  stadium_segments = "all") + 
+  theme_void() + 
+  coord_fixed()
+```
+
+![](geommlbstadiums_tutorial_files/figure-markdown_github/unnamed-chunk-19-1.png)
+
+Overall, it would be hard to confidently conclude that the home stadiums would have changed each team's total home run mark, but this package allows for an intriguing starting point for answering this question.
+
+Some potential questions we will leave up to the reader for exercises:
+
+-   Choose your favorite player and analyze the difference between his home and away spray charts depending on stadium.
+
+-   Choose your favorite team and determine which players utilized all parts of the field most effectively.
+
+-   Determine if certain positions (i.e. shortstops vs first basemen) tend to spray the ball to different parts of the field.
+
+-   Analyze what spraycharts look like against a particular pitcher.
+
+-   Be creative with your own questions and use the package to draw insightful observations.

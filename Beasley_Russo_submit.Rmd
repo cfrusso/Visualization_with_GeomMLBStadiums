@@ -1,0 +1,10 @@
+---
+author: Luke Beasley and Chris Russo
+title: "Visualization with GeomMLBStadiums Tutorial"
+output: html_document
+editor_options: 
+  chunk_output_type: console
+---
+
+We wrote a tutorial for the GeomMLBStadiums package which contains tools for graphing baseball data. The tutorial is on GitHub: [Visualization_with_GeomMLBStadiums](https://github.com/cfrusso/Visualization_with_GeomMLBStadiums/blob/master/geommlbstadiums_tutorial.md)
+
